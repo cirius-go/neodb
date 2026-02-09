@@ -1,13 +1,12 @@
 package main
 
 import (
-	"context"
-	"flag"
-	"time"
-
 	"cirius-go/neodb/cmd/neodb/config"
 	"cirius-go/neodb/pkg/common"
 	"cirius-go/neodb/pkg/common/envloader"
+	"context"
+	"flag"
+	"time"
 )
 
 // flags
@@ -30,6 +29,9 @@ func main() {
 
 	cfg, err := envloader.Load[config.Config](infraContext, envLoaders...)
 	panicIf(err)
+}
+
+func contructConnectionService() {
 }
 
 func panicIf(err error) {
