@@ -25,7 +25,6 @@ Go 1.25+, TypeScript 5.x, Angular (Latest Stable).: Follow standard conventions
 ## Recent Changes
 - 001-editor-suite: Added Go 1.25+, TypeScript 5.x, Angular (Latest Stable).
 - 001-editor-suite: Added Go 1.25+, TypeScript 5.x, Angular (Latest Stable).
-- 001-editor-suite: Added Go 1.25+, TypeScript 5.x, Angular (Latest Stable).
 
 <!-- nx configuration start-->
 <!-- Leave the start & end comments to automatically receive updates. -->

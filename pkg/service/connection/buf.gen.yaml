@@ -1,0 +1,8 @@
+version: v1
+plugins:
+  - plugin: go
+    out: .
+    opt: paths=import
+  - plugin: connect-go
+    out: .
+    opt: paths=import

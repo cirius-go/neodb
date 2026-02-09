@@ -1,0 +1,5 @@
+version: '3'
+includes:
+  goproject:
+    taskfile: ../../common/taskfile/Taskfile.goproject.yaml
+    flatten: true

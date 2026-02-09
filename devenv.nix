@@ -6,7 +6,7 @@
   util = import ./nix/util.nix {inherit pkgs lib;};
   inherit (util) enableAll;
 in {
-  packages = with pkgs; [spec-kit go-task protobuf grpcurl buf];
+  packages = with pkgs; [spec-kit go-task protobuf grpcurl buf protoc-gen-go protoc-gen-connect-go];
   languages.go = {
     enable = true;
     version = "1.25.5";
@@ -28,7 +28,7 @@ in {
     echo  "NodeJS $(node --version)"
     echo  "NPM $(npm --version)"
     git   --version
-    go    --version
+    go    version
   '';
 
   # https://devenv.sh/basics/

@@ -1,74 +1,49 @@
-# Data Model: NeoDB Editor Suite
+# Data Model
 
-**Feature**: 001-editor-suite
-**Date**: 2026-02-09
+## Entities
 
-## Protobuf Entities
+### ConnectionProfile
+Represents a saved database connection configuration.
 
-The data model reflects the granular gRPC service structure. Each service has its own `.proto` definition and package.
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | UUID | Unique identifier |
+| `name` | String | User-friendly display name |
+| `driver` | Enum | `postgres`, `mysql`, `sqlite` |
+| `host` | String | Hostname or IP |
+| `port` | Int | Port number |
+| `user` | String | Username |
+| `password` | String | Encrypted password or reference to secure storage |
+| `database` | String | Target database name |
+| `ssl_mode` | Enum | `disable`, `require`, `verify-full` |
+| `created_at` | Timestamp | |
+| `updated_at` | Timestamp | |
 
-### `neodb.connection.v1.ConnectionService`
-*Physical connection management.*
+### SchemaInfo
+Hierarchical representation of the database structure.
 
-| RPC | Input | Output | Description |
-|---|---|---|---|
-| `CreateProfile` | `ConnectionProfile` | `CreateProfileResponse` | Save a new connection config. |
-| `ListProfiles` | `ListProfilesRequest` | `ListProfilesResponse` | List saved configs. |
-| `TestConnection`| `TestConnectionRequest` | `TestConnectionResponse` | Verify connectivity without saving. |
+- **Database** has many **Schemas** (or just "Default" for MySQL/SQLite)
+- **Schema** has many **Tables** and **Views**
+- **Table** has many **Columns**
 
-**Core Messages**:
-- `ConnectionProfile`: Defines connection parameters (id, name, driver, host, port, etc.).
-- `CreateProfileRequest`, `CreateProfileResponse`, `ListProfilesRequest`, `ListProfilesResponse`, `TestConnectionRequest`, `TestConnectionResponse`.
+### Column
+| Field | Type | Description |
+|-------|------|-------------|
+| `name` | String | Column name |
+| `data_type` | String | Native DB type (e.g., `VARCHAR`, `INT`) |
+| `is_nullable` | Boolean | |
+| `is_primary_key`| Boolean | |
+| `default_value` | String | |
 
-### `neodb.session.v1.SessionService`
-*Contextual state management.*
+## API Messages (Protobuf mappings)
 
-| RPC | Input | Output | Description |
-|---|---|---|---|
-| `CreateSession` | `CreateSessionRequest` | `CreateSessionResponse` | Start a new session from a profile. |
-| `CloseSession` | `CloseSessionRequest` | `CloseSessionResponse` | Close an active session. |
-| `GetHistory` | `GetHistoryRequest` | `GetHistoryResponse` | Get executed queries history. |
+The internal domain model will map closely to these Protobuf definitions.
 
-**Core Messages**:
-- `CreateSessionRequest`, `CreateSessionResponse`, `CloseSessionRequest`, `CloseSessionResponse`, `GetHistoryRequest`, `GetHistoryResponse`.
-- `HistoryEntry`: Represents an entry in the query history.
+### Query Result
+Not persisted, transient.
 
-### `neodb.discovery.v1.DiscoveryService`
-*Metadata introspection.*
+- **RowBatch**: Streamed chunk of rows.
+- **Value**: Polymorphic value (string, int, bool, null, bytes).
 
-| RPC | Input | Output | Description |
-|---|---|---|---|
-| `GetTables` | `GetTablesRequest` | `GetTablesResponse` | List tables in current schema. |
-| `GetColumns` | `GetColumnsRequest` | `GetColumnsResponse` | List columns for a table. |
-
-**Core Messages**:
-- `GetTablesRequest`, `GetTablesResponse`, `GetColumnsRequest`, `GetColumnsResponse`.
-- `TableInfo`: Metadata about a database table.
-- `ColumnInfo`: Metadata about a specific column. (Note: A common `types.proto` might be considered later for shared types like this).
-
-### `neodb.query.v1.QueryService`
-*Execution engine.*
-
-| RPC | Input | Output | Description |
-|---|---|---|---|
-| `ExecuteStream`| `ExecuteRequest` | `stream neodb.result.v1.RowBatch` | Stream rows for SELECT statements. |
-| `ExecuteExec` | `ExecuteRequest` | `neodb.result.v1.ExecResult` | Execute non-query (UPDATE/INSERT/DELETE) statements. |
-
-**Core Messages**:
-- `ExecuteRequest`: Contains `session_id` and `sql`.
-
-### `neodb.result.v1.ResultService`
-*Data processing and export.*
-
-| RPC | Input | Output | Description |
-|---|---|---|---|
-| `Export` | `ExportRequest` | `stream ExportChunk` | Export result set to a file format. |
-
-**Core Messages**:
-- `RowBatch`: Contains a batch of rows and optional column info.
-- `Row`: A single row of values.
-- `Value`: A union type for different data types.
-- `ExecResult`: Summary of an execution (rows affected, error).
-- `ExportRequest`, `ExportChunk`.
-- `ColumnInfo`: Re-defined for now within `result.proto` to avoid circular dependencies with `discovery.proto` if both import a common `types.proto`.
-
+## Persistence
+- **Profiles**: Stored in a local file (e.g., `~/.neodb/config.yaml` or SQLite) for CLI/Desktop. encrypted if possible.

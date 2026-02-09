@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package neodb.result.v1;
+
+option go_package = "protogen/v1;resultv1";
+
+service ResultService {
+  rpc Export(ExportRequest) returns (stream ExportChunk);
+}
+
+message RowBatch {
+  repeated ColumnInfo columns = 1; // Sent in the first batch
+  repeated Row rows = 2;
+}
+
+message Row { repeated Value values = 1; }
+message Value {
+  oneof kind {
+    string string_value = 1;
+    int64 int_value = 2;
+    double double_value = 3;
+    bool bool_value = 4;
+    bytes bytes_value = 5;
+    bool is_null = 6;
+  }
+}
+
+message ExecResult { int64 rows_affected = 1; int64 duration_ms = 2; string error = 3; }
+
+message ExportRequest { string session_id = 1; string sql = 2; string format = 3; }
+message ExportChunk { bytes data = 1; }
+
+message ColumnInfo { // Re-defined here to avoid circular dependency for now. Consider a common `types` package if shared often.
+  string name = 1;
+  string type = 2;
+  bool is_nullable = 3;
+  bool is_primary_key = 4;
+}

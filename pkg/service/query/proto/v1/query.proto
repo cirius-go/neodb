@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package neodb.query.v1;
+
+option go_package = "protogen/v1;queryv1";
+
+service QueryService {
+}
+
+message ExecuteRequest { string session_id = 1; string sql = 2; }

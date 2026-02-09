@@ -2,15 +2,15 @@ go 1.25.5
 
 use (
 	// core
-	./internal/common
+	./pkg/common
 
 	// services
-	./internal/service/connection
-	./internal/service/discovery
-	./internal/service/query
-	./internal/service/result
-	./internal/service/session
+	./pkg/service/connection
+	./pkg/service/discovery
+	./pkg/service/query
+	./pkg/service/result
+	./pkg/service/session
 
 	// apps
-	./internal/app/neodb
+	./cmd/neodb
 )

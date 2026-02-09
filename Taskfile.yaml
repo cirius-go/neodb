@@ -1,35 +1,35 @@
-version: "3"
+version: '3'
 env:
-  GOWORK: "{{ .ROOT_DIR }}/go.work"
+  GOWORK: '{{ .ROOT_DIR }}/go.work'
 includes:
   lib:common:
-    taskfile: ./internal/common/Taskfile.yaml
-    dir: ./internal/common
+    taskfile: ./pkg/common/Taskfile.yaml
+    dir: ./pkg/common
   app:neodb:
-    taskfile: ./internal/app/neodb/Taskfile.yaml
-    dir: ./internal/app/neodb
+    taskfile: ./cmd/neodb/Taskfile.yaml
+    dir: ./cmd/neodb
   service:connection:
-    taskfile: ./internal/service/connection/Taskfile.yaml
-    dir: ./internal/service/connection
+    taskfile: ./pkg/service/connection/Taskfile.yaml
+    dir: ./pkg/service/connection
   service:discovery:
-    taskfile: ./internal/service/discovery/Taskfile.yaml
-    dir: ./internal/service/discovery
+    taskfile: ./pkg/service/discovery/Taskfile.yaml
+    dir: ./pkg/service/discovery
   service:query:
-    taskfile: ./internal/service/query/Taskfile.yaml
-    dir: ./internal/service/query
+    taskfile: ./pkg/service/query/Taskfile.yaml
+    dir: ./pkg/service/query
   service:result:
-    taskfile: ./internal/service/result/Taskfile.yaml
-    dir: ./internal/service/result
+    taskfile: ./pkg/service/result/Taskfile.yaml
+    dir: ./pkg/service/result
   service:session:
-    taskfile: ./internal/service/session/Taskfile.yaml
-    dir: ./internal/service/session
+    taskfile: ./pkg/service/session/Taskfile.yaml
+    dir: ./pkg/service/session
 tasks:
   default:
-    desc: "Listing all commands inside project"
+    desc: 'Listing all commands inside project'
     cmds:
       - task -l
   tidy:
-    desc: "Tidy all project at once"
+    desc: 'Tidy all project at once'
     deps:
       - lib:common:tidy
       - service:connection:tidy
@@ -38,3 +38,11 @@ tasks:
       - service:result:tidy
       - service:session:tidy
       - app:neodb:tidy
+  buf:gen:
+    desc: 'Generate all bufs'
+    deps:
+      - service:connection:buf:gen
+      - service:discovery:buf:gen
+      - service:query:buf:gen
+      - service:result:buf:gen
+      - service:session:buf:gen
