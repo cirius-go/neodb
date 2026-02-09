@@ -1,0 +1,26 @@
+# Devenv
+.devenv*
+devenv.local.nix
+devenv.local.yaml
+
+# direnv
+.direnv
+
+# pre-commit
+.pre-commit-config.yaml
+
+# Nx
+.nx
+
+# NodeJS
+node_modules
+
+# Idea
+.idea
+
+# misc
+.DS_Store
+
+.angular
+
+vitest.config.*.timestamp*

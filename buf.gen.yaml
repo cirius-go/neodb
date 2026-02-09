@@ -1,0 +1,22 @@
+version: v1
+plugins:
+  # Go generation
+  - plugin: buf.build/protocolbuffers/go
+    out: .
+    opt: paths=source_relative
+  - plugin: buf.build/connectrpc/go
+    out: .
+    opt: paths=source_relative
+
+  # TypeScript generation (for Angular)
+  # Assuming frontend is at internal/app/neodb-spa and neodb-desktop
+  # We might want to generate into a shared lib or directly into apps.
+  # For now, let's output to a shared location or just show the config.
+  # The user can adjust the output path.
+  # Using 'es' and 'connect-es' for Connect-Web support.
+  # - plugin: buf.build/bufbuild/es
+  #   out: internal/app/frontend-nx/libs/proto-clients/src/lib
+  #   opt: target=ts
+  # - plugin: buf.build/connectrpc/es
+  #   out: internal/app/frontend-nx/libs/proto-clients/src/lib
+  #   opt: target=ts

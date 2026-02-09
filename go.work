@@ -1,0 +1,16 @@
+go 1.25.5
+
+use (
+	// core
+	./internal/common
+
+	// services
+	./internal/service/connection
+	./internal/service/discovery
+	./internal/service/query
+	./internal/service/result
+	./internal/service/session
+
+	// apps
+	./internal/app/neodb
+)

@@ -1,0 +1,11 @@
+version: "3"
+tasks:
+  default:
+    desc: "Listing commands"
+    cmds:
+      - task -l
+  tidy:
+    desc: "Tidy project"
+    cmds:
+      - go generate ./...
+      - go mod tidy

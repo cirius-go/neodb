@@ -1,0 +1,7 @@
+version: v1
+directories:
+  - internal/service/connection/proto
+  - internal/service/discovery/proto
+  - internal/service/query/proto
+  - internal/service/result/proto
+  - internal/service/session/proto

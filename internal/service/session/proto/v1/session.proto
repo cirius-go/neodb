@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package neodb.session.v1;
+
+option go_package = "github.com/cirius-go/neodb/internal/service/session/proto/v1;sessionv1";
+
+service SessionService {
+  rpc CreateSession(CreateSessionRequest) returns (CreateSessionResponse);
+  rpc CloseSession(CloseSessionRequest) returns (CloseSessionResponse);
+  rpc GetHistory(GetHistoryRequest) returns (GetHistoryResponse);
+}
+
+message CreateSessionRequest { string profile_id = 1; }
+message CreateSessionResponse { string session_id = 1; }
+message CloseSessionRequest { string session_id = 1; }
+message CloseSessionResponse {}
+message GetHistoryRequest { string session_id = 1; }
+message GetHistoryResponse { repeated HistoryEntry entries = 1; }
+message HistoryEntry { string sql = 1; int64 timestamp = 2; int64 duration_ms = 3; }
