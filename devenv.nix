@@ -6,7 +6,7 @@
   util = import ./nix/util.nix {inherit pkgs lib;};
   inherit (util) enableAll;
 in {
-  packages = with pkgs; [spec-kit go-task protobuf grpcurl buf protoc-gen-go protoc-gen-connect-go];
+  packages = with pkgs; [spec-kit go-task protobuf grpcurl buf protoc-gen-go protoc-gen-connect-go dotenv-cli];
   languages.go = {
     enable = true;
     version = "1.25.5";

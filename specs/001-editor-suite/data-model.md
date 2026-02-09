@@ -35,15 +35,18 @@ Hierarchical representation of the database structure.
 | `is_primary_key`| Boolean | |
 | `default_value` | String | |
 
-## API Messages (Protobuf mappings)
+## API Resources (JSON)
 
-The internal domain model will map closely to these Protobuf definitions.
+The internal domain model will map to these JSON resources in the REST API.
 
 ### Query Result
-Not persisted, transient.
+Not persisted, transient response.
 
-- **RowBatch**: Streamed chunk of rows.
-- **Value**: Polymorphic value (string, int, bool, null, bytes).
+- **QueryResult**:
+  - `columns`: Array of column metadata (name, type).
+  - `rows`: Array of row arrays. Each value is a primitive or null.
+  - `rows_affected`: Integer.
+  - `duration_ms`: Integer.
 
 ## Persistence
 - **Profiles**: Stored in a local file (e.g., `~/.neodb/config.yaml` or SQLite) for CLI/Desktop. encrypted if possible.

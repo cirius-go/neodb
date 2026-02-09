@@ -9,7 +9,3 @@ tasks:
     cmds:
       - go generate ./...
       - go mod tidy
-  buf:gen:
-    desc: 'Generate buf'
-    cmds:
-      - buf generate --path=./proto

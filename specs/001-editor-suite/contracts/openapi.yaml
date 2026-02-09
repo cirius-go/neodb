@@ -1,0 +1,281 @@
+openapi: 3.0.0
+info:
+  title: NeoDB API
+  version: 1.0.0
+  description: API for NeoDB Editor Suite (Connection, Query, Introspection)
+
+paths:
+  /api/v1/profiles:
+    get:
+      summary: List connection profiles
+      operationId: listProfiles
+      responses:
+        '200':
+          description: List of profiles
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Profile'
+    post:
+      summary: Create or update a profile
+      operationId: saveProfile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Profile'
+      responses:
+        '200':
+          description: Saved profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+
+  /api/v1/profiles/{id}:
+    delete:
+      summary: Delete a profile
+      operationId: deleteProfile
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Profile deleted
+
+  /api/v1/connect:
+    post:
+      summary: Establish a connection
+      operationId: connect
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                profile_id:
+                  type: string
+      responses:
+        '200':
+          description: Connection successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  session_id:
+                    type: string
+
+  /api/v1/disconnect:
+    post:
+      summary: Close a connection
+      operationId: disconnect
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                session_id:
+                  type: string
+      responses:
+        '204':
+          description: Disconnected
+
+  /api/v1/query:
+    post:
+      summary: Execute a SQL query
+      operationId: executeQuery
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                session_id:
+                  type: string
+                sql:
+                  type: string
+      responses:
+        '200':
+          description: Query results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueryResult'
+
+  /api/v1/introspection/schemas:
+    get:
+      summary: List database schemas
+      operationId: listSchemas
+      parameters:
+        - name: session_id
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of schemas
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+
+  /api/v1/introspection/tables:
+    get:
+      summary: List tables in a schema
+      operationId: listTables
+      parameters:
+        - name: session_id
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: schema
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of tables
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TableSummary'
+
+  /api/v1/introspection/tables/{name}:
+    get:
+      summary: Get table details
+      operationId: getTableDetails
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: session_id
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: schema
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Table details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TableDetail'
+
+components:
+  schemas:
+    Profile:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        driver:
+          type: string
+          enum: [postgres, mysql, sqlite]
+        host:
+          type: string
+        port:
+          type: integer
+        user:
+          type: string
+        password:
+          type: string
+        database:
+          type: string
+        ssl_mode:
+          type: string
+
+    QueryResult:
+      type: object
+      properties:
+        columns:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              type:
+                type: string
+        rows:
+          type: array
+          items:
+            type: array
+            items:
+              type: object # Polymorphic value wrapper
+        rows_affected:
+          type: integer
+        duration_ms:
+          type: integer
+        error:
+          type: string
+
+    TableSummary:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+
+    TableDetail:
+      type: object
+      properties:
+        name:
+          type: string
+        columns:
+          type: array
+          items:
+            $ref: '#/components/schemas/ColumnDetail'
+        constraints:
+          type: array
+          items:
+            $ref: '#/components/schemas/Constraint'
+
+    ColumnDetail:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+        is_nullable:
+          type: boolean
+        is_primary_key:
+          type: boolean
+        default_value:
+          type: string
+
+    Constraint:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+        definition:
+          type: string

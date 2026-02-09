@@ -1,8 +1,0 @@
-version: v1
-plugins:
-  - plugin: go
-    out: ./protogen
-    opt: paths=import
-  - plugin: connect-go
-    out: ./protogen
-    opt: paths=import

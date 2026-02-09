@@ -8,15 +8,15 @@
 
 > [!IMPORTANT]
 > - **Language**: Go (Backend/CLI), TypeScript/Angular (Frontend)
-> - **Frameworks**: Cobra/Viper (CLI), gRPC/Connect (API), Angular + Material (Web)
-> - **Infrastructure**: Docker for local DBs, Buf for Proto management, Nx for Monorepo
+> - **Frameworks**: Cobra/Viper (CLI), Standard `net/http` (REST API), Angular + Material (Web)
+> - **Infrastructure**: Docker for local DBs, Nx for Monorepo, Wails (Desktop)
 > - **Key Libraries**: `pgx` (PostgreSQL), `go-sqlite3` (SQLite), `sqlx` or `squirrel` (Query building)
 
 ### Constraints & Unknowns
 
 - **Database Drivers**: Validated `pgx` (Postgres), `go-sql-driver/mysql` (MySQL), and `modernc.org/sqlite` (SQLite, pure Go).
   - *Status*: RESOLVED (See `research.md`)
-- **gRPC-Web/Connect**: Validated Connect-Go + `@connectrpc/connect-web` for single-port support.
+- **API Strategy**: Switched to Standard REST/JSON for simplicity and direct frontend/Wails integration.
   - *Status*: RESOLVED (See `research.md`)
 - **Desktop Bundling**: Selected Wails for unified Go+Angular binary.
   - *Status*: RESOLVED (See `research.md`)
@@ -34,15 +34,15 @@
 
 ## Gate: Phase 0 (Research)
 
-- [ ] **Research Task 1**: Evaluate Go database drivers for introspection capabilities (Postgres, MySQL, SQLite).
-- [ ] **Research Task 2**: Prototype Connect-Go server serving both gRPC and HTTP/JSON/Web traffic on the same port.
-- [ ] **Research Task 3**: Investigate Wails vs Electron vs Local Server for the "Desktop" experience.
-- [ ] **Research Task 4**: Determine strategy for SQL parsing/validation (Client-side vs Server-side vs DB-side).
+- [x] **Research Task 1**: Evaluate Go database drivers for introspection capabilities (Postgres, MySQL, SQLite).
+- [x] **Research Task 2**: Prototype Connect-Go vs REST (Decision: REST).
+- [x] **Research Task 3**: Investigate Wails vs Electron vs Local Server for the "Desktop" experience.
+- [x] **Research Task 4**: Determine strategy for SQL parsing/validation (Client-side vs Server-side vs DB-side).
 
 ## Gate: Phase 1 (Design)
 
 - [ ] `data-model.md`: Define `ConnectionProfile`, `Schema`, `Table`, `Column`, `QueryResult` structs/messages.
-- [ ] `/contracts/*.proto`: Define the `ConnectionService`, `QueryService`, `IntrospectionService` APIs.
+- [ ] `contracts/openapi.yaml`: Define the REST API endpoints using OpenAPI 3.0.
 - [ ] `quickstart.md`: Guide for running the CLI and Web UI locally.
 - [ ] Agent Context Update: Run `.specify/scripts/bash/update-agent-context.sh`.
 

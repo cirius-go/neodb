@@ -22,20 +22,23 @@
 
 ---
 
-## Research Area 2: API & Transport (Connect-Go)
+## Research Area 2: API & Transport (REST)
 
-**Objective**: Verify if Connect-Go can serve CLI (gRPC) and Web (Browser) clients simultaneously without Envoy.
+**Objective**: Determine the best API strategy for CLI, Web, and Desktop clients.
 
 ### Findings
-- **Connect-Go**: Designed specifically to serve gRPC, gRPC-Web, and the Connect protocol over a single HTTP/1.1 or HTTP/2 port.
-- **Browser Support**: The `connect-web` (or `@connectrpc/connect-web`) client library allows the Angular app to talk directly to the Go server using the Connect protocol (or gRPC-Web) without a proxy.
-- **CLI Support**: The Go client can use standard gRPC or Connect protocol.
+- **Original Plan (Connect-Go)**: Good for type safety, but introduces complexity with Proto generation and frontend dependencies.
+- **REST/JSON**: Standard `net/http` in Go is robust and sufficient. Angular has native `HttpClient`. Wails integration is straightforward with REST (or internal Go method bindings).
+- **Simplicity**: Removing Protos simplifies the build chain (no `buf`, no `protoc`) and reduces friction for "quick edits" in a local tool context.
 
 ### Decision
-- Use **Connect-Go** for all service definitions.
-- Expose a single HTTP server.
-- Web UI uses `@connectrpc/connect-web`.
-- CLI uses Connect-Go client.
+- **Protocol**: Standard REST API with JSON.
+- **Router**: Use Go 1.22+ standard library `http.ServeMux` (or `chi` if middleware needs get complex).
+- **Documentation**: OpenAPI 3.0 spec for contract definition.
+- **Clients**:
+  - Web: Angular `HttpClient`.
+  - CLI: Standard Go `net/http` Client.
+  - Desktop: Wails can share the same HTTP handlers or bind directly. We will stick to HTTP for consistency across all 3 apps initially.
 
 ---
 
@@ -50,8 +53,8 @@
 4.  **Local Server + Browser**: Not a "native app".
 
 ### Decision
-- **Wails**: It aligns perfectly with our stack (Go + Angular). It allows us to reuse the Angular code 100% for the web version and the desktop version. The Go "Service" layer can be bound directly to the frontend in Wails, or we can just keep using localhost HTTP/Connect for consistency between Web and Desktop modes.
-- **Implementation Note**: To keep architecture unified, the Desktop app will likely start the Connect server internally and the UI will connect to `localhost`. Or use Wails bindings for "offline" feel. *Refinement*: Using Wails bindings for everything differs from the Web (HTTP) approach. **Hybrid Approach**: The Core Logic is exposed via Connect-Go. The Desktop App (Wails) starts this server in-process. The UI calls the local server. This ensures 100% code reuse between Web and Desktop UI.
+- **Wails**: It aligns perfectly with our stack (Go + Angular). It allows us to reuse the Angular code 100% for the web version and the desktop version.
+- **Architecture**: The Go application will start an HTTP server. The Wails frontend (Angular) will consume this API via `localhost` (or internal bridge). This ensures the Web UI and Desktop UI run the exact same code.
 
 ---
 
