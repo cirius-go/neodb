@@ -9,9 +9,6 @@ devenv.local.yaml
 # pre-commit
 .pre-commit-config.yaml
 
-# Nx
-.nx
-
 # NodeJS
 node_modules
 
@@ -21,6 +18,13 @@ node_modules
 # misc
 .DS_Store
 
-.angular
-
-vitest.config.*.timestamp*
+# Go
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+vendor/
+neodb
