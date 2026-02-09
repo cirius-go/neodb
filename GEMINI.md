@@ -23,7 +23,8 @@ npm test && npm run lint
 Go 1.25+, TypeScript 5.x, Angular (Latest Stable).: Follow standard conventions
 
 ## Recent Changes
-- 001-editor-suite: Added Go 1.25+, TypeScript 5.x, Angular (Latest Stable).
+- 002-interactive-sql-tui: Added Go 1.25+
+- 002-interactive-sql-tui: Added Go 1.25+
 - 001-editor-suite: Added Go 1.25+, TypeScript 5.x, Angular (Latest Stable).
 
 <!-- nx configuration start-->

@@ -1,40 +1,8 @@
-version: '3'
+version: "3"
 env:
-  GOWORK: '{{ .ROOT_DIR }}/go.work'
-includes:
-  lib:common:
-    taskfile: ./pkg/common/Taskfile.yaml
-    dir: ./pkg/common
-  app:neodb:
-    taskfile: ./cmd/neodb/Taskfile.yaml
-    dir: ./cmd/neodb
-  service:connection:
-    taskfile: ./pkg/service/connection/Taskfile.yaml
-    dir: ./pkg/service/connection
-  service:discovery:
-    taskfile: ./pkg/service/discovery/Taskfile.yaml
-    dir: ./pkg/service/discovery
-  service:query:
-    taskfile: ./pkg/service/query/Taskfile.yaml
-    dir: ./pkg/service/query
-  service:result:
-    taskfile: ./pkg/service/result/Taskfile.yaml
-    dir: ./pkg/service/result
-  service:session:
-    taskfile: ./pkg/service/session/Taskfile.yaml
-    dir: ./pkg/service/session
+  GOWORK: "{{ .ROOT_DIR }}/go.work"
 tasks:
   default:
-    desc: 'Listing all commands inside project'
+    desc: "Listing all commands inside project"
     cmds:
       - task -l
-  tidy:
-    desc: 'Tidy all project at once'
-    deps:
-      - lib:common:tidy
-      - service:connection:tidy
-      - service:discovery:tidy
-      - service:query:tidy
-      - service:result:tidy
-      - service:session:tidy
-      - app:neodb:tidy
