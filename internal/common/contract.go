@@ -78,21 +78,58 @@ type (
 type Validator interface {
 	// Struct validates the given struct based on defined tags.
 	Struct(s any) error
+	// Var validates a variable against the provided tag.
+	Var(s any, tag string) error
 }
 
+// Some contraints that errors should be satisfied.
 type (
-	// Error defines the contract for error types.
-	Error[ErrType, DetailType any] interface {
+	// DomainError defines the contract for domain error types.
+	DomainError[ErrType, DetailErrType any] interface {
 		Error() string
 		Unwrap() error
 		Is(target error) bool
-		WithDetail(detail DetailType) ErrType
+		AddError(err DetailErrType) ErrType
 		WithInternal(err error) ErrType
 	}
 
-	// I18nError represents an internationalization error.
-	I18nError[ErrType, DetailType, LocalizedErrType any] interface {
-		Error[ErrType, DetailType]
+	// I18nDomainError represents an internationalization error.
+	I18nDomainError[I18nErrType, I18nErrDetailType, LocalizedErrType any] interface {
+		DomainError[I18nErrType, I18nErrDetailType]
 		Localize(langTag string) LocalizedErrType
+	}
+
+	// AppError defines the contract for application error types.
+	AppError[KindType, ErrType, DetailErrType, DomainErrType any] interface {
+		Error() string
+		Unwrap() error
+		Is(target error) bool
+		AddError(err DetailErrType) ErrType
+		WithInternal(err error) ErrType
+		WithKind(k KindType) ErrType
+		WithDomainError(err DomainErrType) ErrType
+	}
+
+	// I18nAppError defines the contract for internationalized application error types.
+	I18nAppError[KindType, ErrType, DetailErrType, DomainErrType, LocalizedErrType any] interface {
+		AppError[KindType, ErrType, DetailErrType, DomainErrType]
+		Localize(langTag string) LocalizedErrType
+	}
+
+	// StatusError represents an error with an associated HTTP status code.
+	StatusError[ErrType, DetailErrType, AppErrType any] interface {
+		Error() string
+		Unwrap() error
+		Is(target error) bool
+		AddError(err DetailErrType) ErrType
+		WithInternal(err error) ErrType
+		WithStatus(status int) ErrType
+		WithAppError(err AppErrType) ErrType
+	}
+
+	// I18nStatusError represents an internationalized error with an associated HTTP status code.
+	I18nStatusError[ErrType, DetailErrType, AppErrType, LocalizedAppErrType any] interface {
+		StatusError[ErrType, DetailErrType, AppErrType]
+		Localize(langTag string) LocalizedAppErrType
 	}
 )

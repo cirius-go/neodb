@@ -7,8 +7,8 @@
 ## Phase 1: Setup
 **Goal**: Initialize project structure and tooling.
 
-- [ ] T001 Initialize Go module `neodb` in root (if not exists)
-- [ ] T002 Create directory structure (`cmd`, `internal/domain`, `internal/port`, `internal/service`, `internal/infra`, `internal/common`)
+- [x] T001 Initialize Go module `neodb` in root (if not exists)
+- [x] T002 Create directory structure (`cmd`, `internal/domain`, `internal/port`, `internal/service`, `internal/infra`, `internal/common`)
 - [ ] T003 Setup `Taskfile.yaml` or `Makefile` for build, lint, and test commands
 - [ ] T004 Configure `golangci-lint` in `.golangci.yml` (or verify existing)
 - [ ] T005 Create `cmd/neodb/main.go` with basic "Hello World" to verify build

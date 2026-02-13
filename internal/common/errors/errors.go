@@ -1,113 +1,59 @@
 package errors
 
-import (
-	"cirius-go/neodb/internal/common"
-	"cirius-go/neodb/internal/common/slice"
-	"errors"
-	"fmt"
-	"net/http"
+import "fmt"
 
-	"golang.org/x/text/language"
-)
+// AppError represents an application error.
+type AppError struct {
+	Code  string
+	Cause error
+}
 
-// Aliases for errors package functions.
-var (
-	Is     = errors.Is
-	Unwrap = errors.Unwrap
-	As     = errors.As
-)
-
-var (
-	DefaultLanguage      = language.English.String()
-	UnknownErrorLocation = "unknown"
-)
-
-type (
-	// ErrorDetail represents detailed information about an error.
-	ErrorDetail struct {
-		// Location of the error, e.g., field name or parameter.
-		Location string `json:"location" yaml:"location"`
-		// Value associated with the error, e.g., invalid value.
-		Value any `json:"value,omitempty" yaml:"value,omitempty"`
-		// Message is the human-readable error message.
-		Message string `json:"message" yaml:"message"`
+// Error implements the error interface.
+func (d *AppError) Error() string {
+	if d.Cause == nil {
+		return d.Code
 	}
-	// StatusError is a marker interface for simple status errors.
-	StatusError struct {
-		Status   int            `json:"status" yaml:"status"`
-		Title    string         `json:"title" yaml:"title"`
-		Detail   string         `json:"detail" yaml:"detail"`
-		Errors   []*ErrorDetail `json:"errors,omitempty" yaml:"errors,omitempty"`
-		internal error          `json:"-" yaml:"-"`
+	return fmt.Sprintf("%s: %s", d.Code, d.Cause.Error())
+}
+
+// WithCause sets the underlying cause of the error.
+func (d *AppError) WithCause(err error) *AppError {
+	return &AppError{
+		Code:  d.Code,
+		Cause: err,
 	}
-)
-
-// Error implements error.
-func (e *ErrorDetail) Error() string {
-	return fmt.Sprintf("%s is having error: %s", e.Location, e.Message)
 }
 
-// Error implements common.Error.
-func (e *StatusError) Error() string {
-	return e.Detail
+// Unwrap returns the underlying cause of the error.
+func (d *AppError) Unwrap() error {
+	return d.Cause
 }
 
-// Unwrap implements common.Error.
-func (e *StatusError) Unwrap() error {
-	return e.internal
-}
-
-// Is implements common.Error.
-func (e *StatusError) Is(target error) bool {
-	t, ok := target.(*StatusError)
-	if !ok {
+// Is checks if the target error is the same as the current error based on the
+// Code.
+func (e *AppError) Is(target error) bool {
+	if e == nil {
 		return false
 	}
-	return e.Detail == t.Detail && e.Status == t.Status
+
+	t, ok := target.(*AppError)
+	if !ok || t == nil {
+		return false
+	}
+
+	return e.Code == t.Code
 }
 
-// WithDetail implements common.Error.
-func (e *StatusError) WithDetail(d *ErrorDetail) *StatusError {
-	e.Errors = append(e.Errors, d)
-	return e
-}
-
-// WithInternal implements common.Error.
-func (e *StatusError) WithInternal(err error) *StatusError {
-	e.internal = err
-	return e
-}
-
-var _ common.Error[*StatusError, *ErrorDetail] = (*StatusError)(nil)
-
-// New creates a new instance of Error.
-func New(status int, msg string, errs ...error) *StatusError {
-	return &StatusError{
-		Status: status,
-		Title:  http.StatusText(status),
-		Detail: msg,
-		Errors: slice.Map(errs, ConvertToErrDetail),
+// NewDomain creates a new domain error with the given code.
+func NewDomain(code string) *AppError {
+	return &AppError{
+		Code: "error:domain:" + code,
 	}
 }
 
-// ConvertToErrDetail converts a generic error to ErrorDetail.
-func ConvertToErrDetail(err error) *ErrorDetail {
-	if err == nil {
-		return nil
-	}
-	if ed, ok := err.(*ErrorDetail); ok {
-		return ed
-	}
-	if af, ok := err.(*I18nErrorDetail); ok {
-		return &ErrorDetail{
-			Location: af.Location,
-			Value:    af.Value,
-			Message:  af.Message.Localize(DefaultLanguage),
-		}
-	}
-	return &ErrorDetail{
-		Location: UnknownErrorLocation,
-		Value:    nil,
-		Message:  err.Error(),
+// NewInfra creates a new infra error with the given code.
+func NewInfra(code string) *AppError {
+	return &AppError{
+		Code: "error:infra:" + code,
 	}
 }

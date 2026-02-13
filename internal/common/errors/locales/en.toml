@@ -1,0 +1,7 @@
+[error:domain:resource_not_found]
+description = "Resource not found"
+other = "The requested resource could not be found. Please check the request and try again."
+
+[error:domain:invalid_input]
+description = "Invalid input"
+other = "The input provided is invalid. Please check the input and try again."

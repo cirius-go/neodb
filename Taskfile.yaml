@@ -6,3 +6,9 @@ tasks:
     desc: "Listing all commands inside project"
     cmds:
       - task -l
+  tidy:
+    desc: "Go mod tidy"
+    cmds:
+      - cd ./internal/common && go mod tidy
+      - cd ./internal/service/identity && go mod tidy
+      - cd ./internal/service/workspace && go mod tidy

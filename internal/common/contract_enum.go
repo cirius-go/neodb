@@ -11,6 +11,83 @@ import (
 )
 
 const (
+	// AppErrorKindDomain is a AppErrorKind of type Domain.
+	AppErrorKindDomain AppErrorKind = "Domain"
+	// AppErrorKindForbidden is a AppErrorKind of type Forbidden.
+	AppErrorKindForbidden AppErrorKind = "Forbidden"
+	// AppErrorKindNotFound is a AppErrorKind of type NotFound.
+	AppErrorKindNotFound AppErrorKind = "NotFound"
+	// AppErrorKindConflict is a AppErrorKind of type Conflict.
+	AppErrorKindConflict AppErrorKind = "Conflict"
+	// AppErrorKindInternalServer is a AppErrorKind of type InternalServer.
+	AppErrorKindInternalServer AppErrorKind = "InternalServer"
+)
+
+var ErrInvalidAppErrorKind = errors.New("not a valid AppErrorKind")
+
+// AppErrorKindValues returns a list of the values for AppErrorKind
+func AppErrorKindValues() []AppErrorKind {
+	return []AppErrorKind{
+		AppErrorKindDomain,
+		AppErrorKindForbidden,
+		AppErrorKindNotFound,
+		AppErrorKindConflict,
+		AppErrorKindInternalServer,
+	}
+}
+
+// String implements the Stringer interface.
+func (x AppErrorKind) String() string {
+	return string(x)
+}
+
+// IsValid provides a quick way to determine if the typed value is
+// part of the allowed enumerated values
+func (x AppErrorKind) IsValid() bool {
+	_, err := ParseAppErrorKind(string(x))
+	return err == nil
+}
+
+var _AppErrorKindValue = map[string]AppErrorKind{
+	"Domain":         AppErrorKindDomain,
+	"Forbidden":      AppErrorKindForbidden,
+	"NotFound":       AppErrorKindNotFound,
+	"Conflict":       AppErrorKindConflict,
+	"InternalServer": AppErrorKindInternalServer,
+}
+
+// ParseAppErrorKind attempts to convert a string to a AppErrorKind.
+func ParseAppErrorKind(name string) (AppErrorKind, error) {
+	if x, ok := _AppErrorKindValue[name]; ok {
+		return x, nil
+	}
+	return AppErrorKind(""), fmt.Errorf("%s is %w", name, ErrInvalidAppErrorKind)
+}
+
+// MarshalText implements the text marshaller method.
+func (x AppErrorKind) MarshalText() ([]byte, error) {
+	return []byte(string(x)), nil
+}
+
+// UnmarshalText implements the text unmarshaller method.
+func (x *AppErrorKind) UnmarshalText(text []byte) error {
+	tmp, err := ParseAppErrorKind(string(text))
+	if err != nil {
+		return err
+	}
+	*x = tmp
+	return nil
+}
+
+// AppendText appends the textual representation of itself to the end of b
+// (allocating a larger slice if necessary) and returns the updated slice.
+//
+// Implementations must not retain b, nor mutate any bytes within b[:len(b)].
+func (x *AppErrorKind) AppendText(b []byte) ([]byte, error) {
+	return append(b, x.String()...), nil
+}
+
+const (
 	// LoggerFormatText is a LoggerFormat of type Text.
 	LoggerFormatText LoggerFormat = iota
 	// LoggerFormatJSON is a LoggerFormat of type JSON.

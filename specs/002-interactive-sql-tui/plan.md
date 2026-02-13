@@ -53,7 +53,7 @@ specs/002-interactive-sql-tui/
 ```text
 cmd/
 └── neodb/                    # Main entry point (wire up adapters)
-internal/
+internal/service/servicexxx/
 ├── domain/                   # Core business entities (Project, Connection, Session, History)
 ├── port/                     # Interfaces (DatabasePort, RepositoryPort, KeyringPort)
 ├── service/                  # Use cases (ProjectService, SessionService, QueryService)

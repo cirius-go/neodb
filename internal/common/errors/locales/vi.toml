@@ -1,0 +1,7 @@
+[error:domain:resource_not_found]
+description = "Resource not found"
+other = "Không tìm thấy tài nguyên yêu cầu. Vui lòng kiểm tra yêu cầu và thử lại."
+
+[error:domain:invalid_input]
+description = "Invalid input"
+other = "Dữ liệu đầu vào không hợp lệ. Vui lòng kiểm tra dữ liệu và thử lại."
